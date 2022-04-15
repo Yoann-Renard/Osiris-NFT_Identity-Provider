@@ -45,7 +45,7 @@ pub async fn signin(
         //println!("{}", username);
         let password = &basic.password;
         
-        println!("from signin : {}", password);
+        //println!("from signin : {}", password);
         let user = repository.find_by_username(username).await.expect("error");
                             //  .await?
                             //  .ok_or_else(|| {
@@ -92,7 +92,7 @@ pub async fn signin(
                         }
 
                         else {
-                            Err(HttpResponse::Found().header("Location", "https://127.0.0.1:4201/pagetest/").finish())
+                            Err(HttpResponse::Found().header("Location", "https://127.0.0.1:4201/").finish())
                             //Err(AppError::INVALID_CREDENTIALS.into())
                         }
                     
