@@ -74,7 +74,6 @@ pub struct Inputlogin {
         .unwrap();
     builder.set_certificate_chain_file("cert.pem").unwrap();
 
-
      HttpServer::new( move || {
          App::new()
                 .wrap(Logger::default())
