@@ -87,7 +87,7 @@ pub struct Inputlogin {
                  //     web::resource("/addition2").route(
                  //         web::post().to(addition2)))
      })         
-     .bind_openssl("127.0.0.1:8080", builder)?
+     .bind_openssl(format!("{}:{}",config.host,config.port), builder)?
      //.bind(format!("{}:{}",config.host,config.port))?
      .run()
      .await
