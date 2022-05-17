@@ -34,7 +34,7 @@ pub async fn signin(
         //println!("{}", username);
         let password = &basic.password;
         
-        //println!("from signin : {}", password);
+        println!("from signin : {}", password);
         let user = repository.find_by_username(username).await.expect("error");
                       
 
@@ -58,18 +58,24 @@ pub async fn signin(
                                                 )
                         }
                         else {
-                            Err(HttpResponse::Found().header("Location", "https://yoloooo.com/front").finish())
+                            Err(HttpResponse::Found().header("Location", "https://yoloooo.com/front").header("Access-Control-Request-Methods","*").header("Access-Control-Allow-Origin","*").finish())
                             //Err(AppError::INVALID_CREDENTIALS.into())
                         }              
     }
 
-pub async fn verify_authent( req: actix_web::HttpRequest, mut payload: actix_web::web::Payload,repository : UserRepository, hashing: Data<CryptoService>) -> HttpResponse {
+pub async fn verify_authent( req: actix_web::HttpRequest, mut payload: actix_web::web::Payload,repository : UserRepository, hashing: Data<CryptoService>) -> Result<actix_web::HttpResponse,actix_web::HttpResponse> {
   
     //into_inner() -> conv between  actix_web::web::Payload and  actix_web::dev::Payload
     let cookie = CookieJWT::from_request(&req,&mut payload.into_inner()).into_inner();
-    let auth_result = hashing.verify_jwt(cookie.unwrap().cookie_value).await;
-    match auth_result{
-        Ok(v) => HttpResponse::Ok().finish(),
-        _ => HttpResponse::Found().header("Location", "https://yolooo.com/").finish(),
+    //let auth_result = hashing.verify_jwt(cookie.unwrap().cookie_value).await;
+
+    match cookie{
+        Ok(v) => {
+            match hashing.verify_jwt(v.cookie_value).await {
+                Ok(v) => Ok(HttpResponse::Ok().finish()),
+                Err(e) => Err(HttpResponse::Found().header("Location", "https://yoloooo.com/front").header("Access-Control-Request-Methods","*").header("Access-Control-Allow-Origin","*").finish()),
+            }
+        },
+        Err(e) => Err(HttpResponse::Found().header("Location", "https://yoloooo.com/front").header("Access-Control-Request-Methods","*").header("Access-Control-Allow-Origin","*").finish()),
     }
 }

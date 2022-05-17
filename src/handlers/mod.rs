@@ -12,6 +12,6 @@ type AppResponse = AppResult<HttpResponse>;
 pub fn app_config(config : &mut ServiceConfig) {
 
     let signin = web::resource("/signin").route(web::post().to(signin));
-    let verify_authent = web::resource("/signin").route(web::post().to(verify_authent));
+    let verify_authent = web::resource("/verify_auth").route(web::get().to(verify_authent));
     config.service(signin).service(verify_authent);
 }

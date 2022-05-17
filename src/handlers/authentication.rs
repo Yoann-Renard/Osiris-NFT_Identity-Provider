@@ -59,7 +59,7 @@ impl FromRequest for AuthenticatedUser {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct CookieJWT {
     pub cookie_value: String,
 }
@@ -77,19 +77,26 @@ impl FromRequest for CookieJWT {
         let cookie_result : std::result::Result<&actix_web::http::HeaderValue, u32> = req
                 .headers()
                 .get("cookie")
-                .ok_or_else(||0)
-                ;
-        let cookie_value1: Vec<&str> = req
-                .headers()
-                .get("cookie")
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .split("=")
-                .collect();
-        let cookie_to_send = CookieJWT {
-            cookie_value: cookie_value1[1].to_string()
-        };
+                .ok_or_else(||0);
+
+        let cookie_value1 : Vec<&str> ;
+        let cookie_to_send : CookieJWT;
+        match req.headers().get("cookie") {
+            Some(v) => {cookie_value1 = req
+                                .headers()
+                                .get("cookie")
+                                .unwrap()
+                                .to_str()
+                                .unwrap()
+                                .split("=")
+                                .collect();
+                    cookie_to_send = CookieJWT {
+                    cookie_value: cookie_value1[1].to_string()
+                    };
+                },
+            None => return ready(Err(AppError::NOT_AUTHORIZED.default())),
+        }
+        
 
         match cookie_result {
             Ok(cookie) => ready(Ok(
