@@ -68,12 +68,11 @@ pub struct Inputlogin {
 
     let crypto_service = config.crypto_service();
 
-    let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-    builder
-        .set_private_key_file("key.pem", SslFiletype::PEM)
-        .unwrap();
-    builder.set_certificate_chain_file("cert.pem").unwrap();
-
+    // let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+    // builder
+    //     .set_private_key_file("key.pem", SslFiletype::PEM)
+    //     .unwrap();
+    // builder.set_certificate_chain_file("cert.pem").unwrap();
 
      HttpServer::new( move || {
          App::new()
@@ -88,7 +87,7 @@ pub struct Inputlogin {
                  //     web::resource("/addition2").route(
                  //         web::post().to(addition2)))
      })         
-     .bind_openssl("127.0.0.1:8080", builder)?
+     .bind(format!("{}:{}",config.host,config.port))?
      //.bind(format!("{}:{}",config.host,config.port))?
      .run()
      .await
